@@ -1,0 +1,173 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Order Failed - Riot.ng</title>
+
+        <!-- CSS FILES -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+        <link href="{% static 'css/tooplate-little-fashion.css' %}" rel="stylesheet">
+
+        <style>
+            .failed-card {
+                background: #ffffff;
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+                padding: 40px;
+                text-align: center;
+                max-width: 500px;
+                margin: 60px auto;
+                border: 1px solid rgba(0, 0, 0, 0.05);
+            }
+            .failed-icon-container {
+                width: 80px;
+                height: 80px;
+                background: rgba(220, 53, 69, 0.1);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 24px auto;
+                animation: scaleIn 0.5s ease-out forwards;
+            }
+            .failed-icon {
+                font-size: 40px;
+                color: #dc3545;
+            }
+            @keyframes scaleIn {
+                0% { transform: scale(0.7); opacity: 0; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            .btn-action {
+                background: #000;
+                color: #fff;
+                border-radius: 30px;
+                padding: 12px 30px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s ease;
+                border: none;
+                margin: 5px;
+                display: inline-block;
+                text-decoration: none;
+            }
+            .btn-action:hover {
+                background: #ff5e3a;
+                color: #fff;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 94, 58, 0.3);
+            }
+            .btn-secondary-action {
+                background: #f8f9fa;
+                color: #212529;
+                border: 1px solid #dee2e6;
+            }
+            .btn-secondary-action:hover {
+                background: #e2e6ea;
+                color: #212529;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                transform: translateY(-2px);
+            }
+        </style>
+    </head>
+    
+<body>
+    <section class="preloader">
+        <div class="spinner">
+            <span class="sk-inner-circle"></span>
+        </div>
+    </section>
+    
+<main>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <img src="{% static 'images/site.png' %}" style="width: 120px; height: auto; margin-left: 5px;" alt="RioT Logo">
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">Story</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+   
+    <section class="py-5">
+        <div class="container">
+            <div class="failed-card">
+                <div class="failed-icon-container">
+                    <i class="bi-x-circle-fill failed-icon"></i>
+                </div>
+                <h2 class="mb-3" style="font-weight: 700;">Payment Failed</h2>
+                <p class="text-muted mb-4">
+                    Unfortunately, your transaction could not be completed. Please check your payment details or try again later.
+                </p>
+                <div>
+                    <a href="{% url 'checkout' %}" class="btn btn-action">
+                        Try Again
+                    </a>
+                    <a href="{% url 'cart' %}" class="btn btn-action btn-secondary-action">
+                        Return to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-10 me-auto mb-4">
+                <a class="footer-menu-item" href="{% url 'index' %}">
+                    <img src="{% static 'images/site.png' %}" style="width: 140px; height: auto; margin-bottom: -50px; margin-left: 10px;" alt="RioT Logo">
+                </a>
+                <br>
+                <p class="copyright-text text-muted mt-lg-5 mb-4 mb-lg-0">Copyright © 2025 <strong>Ri</strong>oT</p>
+                <br>
+                <p class="copyright-text">Developed by RIOT.Inc</p>
+            </div>
+            <div class="col-lg-5 col-8">
+                <h5 class="text-white mb-3">Sitemap</h5>
+                <ul class="footer-menu d-flex flex-wrap">
+                    <li class="footer-menu-item"><a href="{% url 'about' %}" class="footer-menu-link">Story</a></li>
+                    <li class="footer-menu-item"><a href="{% url 'products' %}" class="footer-menu-link">Products</a></li>
+                    <li class="footer-menu-item"><a href="#" class="footer-menu-link">Privacy policy</a></li>
+                    <li class="footer-menu-item"><a href="{% url 'contact' %}" class="footer-menu-link">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-4">
+                <h5 class="text-white mb-3">Social</h5>
+                <ul class="social-icon">
+                    <li><a href="#" class="social-icon-link bi-whatsapp"></a></li>
+                    <li><a href="#" class="social-icon-link bi-instagram"></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/Headroom.js' %}"></script>
+<script src="{% static 'js/jQuery.headroom.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+<script>
+    window.addEventListener('load', () => {
+        document.querySelector('.preloader').style.display = 'none';
+    });
+</script>
+</body>
+</html>

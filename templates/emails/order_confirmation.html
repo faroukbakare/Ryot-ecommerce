@@ -1,0 +1,65 @@
+{% extends "emails/base_email.html" %}
+{% block title %}Order Confirmed #{{ order.id }}{% endblock %}
+
+{% block content %}
+<h1>Order locked in, {{ username }} 🖤</h1>
+
+<p>Your payment went through. We're getting your order ready — expect pure heat in your hands soon.</p>
+
+<div style="background-color: #1a1a1a; border-radius: 8px; padding: 20px; margin: 24px 0; border: 1px solid #252525;">
+    <table role="presentation" width="100%">
+        <tr>
+            <td style="font-family: 'Inter', sans-serif; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 1px;">Order Number</td>
+            <td style="text-align: right; font-family: 'Inter', sans-serif; font-size: 14px; color: #ffffff; font-weight: 600;">#{{ order.id }}</td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Inter', sans-serif; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 1px; padding-top: 8px;">Date</td>
+            <td style="text-align: right; font-family: 'Inter', sans-serif; font-size: 14px; color: #d0d0d0; padding-top: 8px;">{{ order.created_at|date:"M d, Y" }}</td>
+        </tr>
+        <tr>
+            <td style="font-family: 'Inter', sans-serif; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 1px; padding-top: 8px;">Reference</td>
+            <td style="text-align: right; font-family: 'Inter', sans-serif; font-size: 12px; color: #666666; padding-top: 8px;">{{ order.payment_reference|truncatechars:20 }}</td>
+        </tr>
+    </table>
+</div>
+
+<h2>Your Items</h2>
+
+<table class="order-table">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Size</th>
+            <th>Qty</th>
+            <th style="text-align: right;">Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order_items %}
+        <tr>
+            <td style="font-weight: 600; color: #ffffff;">{{ item.product.name }}</td>
+            <td>{{ item.size|default:"—" }}</td>
+            <td>{{ item.quantity }}</td>
+            <td style="text-align: right; color: #d4a843;">₦{{ item.price|floatformat:0 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr class="divider">
+
+<table role="presentation" width="100%">
+    <tr>
+        <td style="font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; color: #ffffff;">Total Paid</td>
+        <td style="text-align: right;" class="order-total">₦{{ order.total_amount|floatformat:0 }}</td>
+    </tr>
+</table>
+
+<p style="text-align: center; margin-top: 32px;">
+    <a href="{{ dashboard_url }}" class="cta-button">View Your Orders</a>
+</p>
+
+<p style="text-align: center; font-size: 13px; color: #666666;">
+    Need help? <a href="{{ site_url }}/contact/">Contact us</a> anytime.
+</p>
+{% endblock %}

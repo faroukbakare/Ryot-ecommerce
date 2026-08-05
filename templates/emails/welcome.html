@@ -1,0 +1,30 @@
+{% extends "emails/base_email.html" %}
+{% load static %}
+
+{% block title %}Welcome to RIOT{% endblock %}
+
+<h1>Welcome to the movement, {{ username }} 🔥</h1>
+
+<p>You just joined the RIOT family — and we don't take that lightly. We're a streetwear brand built for those who move different, think different, and dress like they mean it.</p>
+
+<p>To kick things off, here's an exclusive welcome gift:</p>
+
+<div class="discount-box">
+    <div class="discount-label">Your first-order discount</div>
+    <div class="discount-code">{{ discount_code }}</div>
+    <p style="font-size: 13px; color: #d4a843; margin: 8px 0 0 0; font-weight: 600;">{{ discount_percent }}% OFF your first purchase</p>
+</div>
+
+<p style="text-align: center;">
+    <a href="{% url 'products' %}" class="cta-button">Start Shopping</a>
+</p>
+
+<hr class="divider">
+
+<h2>What to expect from us</h2>
+<p>🚨 <strong>Exclusive drops</strong> — Be first to know when new heat lands<br>
+🏷️ <strong>Member-only deals</strong> — Discounts you won't find anywhere else<br>
+📦 <strong>Fast shipping</strong> — We move as fast as you do</p>
+
+<p style="color: #888888; font-size: 13px;">Got questions? Reply to this email or hit us up on our <a href="{{ site_url }}/contact/">contact page</a>.</p>
+

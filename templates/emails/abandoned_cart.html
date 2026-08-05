@@ -1,0 +1,47 @@
+{% extends "emails/base_email.html" %}
+{% block title %}You forgot something...{% endblock %}
+
+{% block content %}
+<h1>Your cart's getting cold, {{ username }} 💀</h1>
+
+<p>You were so close. These pieces are still waiting for you — but they won't wait forever. Streetwear moves fast, and stock is limited.</p>
+
+<h2>What you left behind</h2>
+
+{% for item in cart_items %}
+<div class="product-card">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            {% if item.product.image %}
+            <td style="width: 120px; vertical-align: top;">
+                <img src="{{ site_url }}{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 4px;">
+            </td>
+            {% endif %}
+            <td class="product-card-info" style="vertical-align: top; padding-left: 16px;">
+                <div class="product-card-name">{{ item.product.name }}</div>
+                {% if item.size %}<div class="product-card-size">Size: {{ item.size }}</div>{% endif %}
+                <div style="font-size: 13px; color: #888888; margin-top: 4px;">Qty: {{ item.quantity }}</div>
+                <div class="product-card-price" style="margin-top: 8px;">₦{{ item.total_price|floatformat:0 }}</div>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endfor %}
+
+<hr class="divider">
+
+<table role="presentation" width="100%">
+    <tr>
+        <td style="font-family: 'Inter', sans-serif; font-size: 14px; color: #888888;">Cart Total</td>
+        <td style="text-align: right;" class="order-total">₦{{ cart_total|floatformat:0 }}</td>
+    </tr>
+</table>
+
+<p style="text-align: center;">
+    <a href="{{ cart_url }}" class="cta-button">Complete Your Order →</a>
+</p>
+
+<p style="text-align: center; font-size: 13px; color: #666666;">
+    Don't sleep on it. Once it's gone, it's <strong style="color: #ffffff;">gone</strong>.
+</p>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ryot.ng{% endblock %}
+
+{% block content %}
+<section class="slick-slideshow">
+    <div class="slick-custom">
+        <img src="{% static 'images/slideshow/site-main-black.png' %}" class="img-fluid" alt="">
+        <div class="slick-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-10">
+                        <h2 class="slick-title">Street High Fashion</h2>
+                        <p class="lead text-white mt-lg-3 mb-lg-5">Ryot.Corp is a brand of apparel that is all about comfort but in a streetwear style.</p>
+                        <a href="{% url 'about' %}" class="btn custom-btn">Learn more about us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slick-custom">
+        <img src="{% static 'images/slideshow/no adi.png' %}" class="img-fluid" height="auto" alt="">
+        <div class="slick-bottom">
+            <div class="container">
+                <div class="row"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slick-custom">
+        <img src="{% static 'images/slideshow/site-main-white.png' %}" style="max-width: 100%; height: auto;">
+        <div class="slick-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-10">
+                        <h1 class="slick-title">Talk to us</h1>
+                        <p class="lead text-white mt-lg-3 mb-lg-5">Get In Touch, with the Team</p>
+                        <a href="{% url 'contact' %}" class="btn custom-btn">Work with us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function getCSRFToken() {
+    return document.querySelector('#csrf-form [name=csrfmiddlewaretoken]').value;
+}
+
+function updateCartCount(count) {
+    let cartBadge = document.getElementById('cart-count');
+    if (!cartBadge) return;
+    if (count > 0) {
+        cartBadge.style.display = 'inline-block';
+        cartBadge.innerText = count;
+    } else {
+        cartBadge.style.display = 'none';
+    }
+}
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('add-to-cart-btn')) {
+        let productId = e.target.dataset.productId;
+        fetch('/ajax/add-to-cart/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `product_id=${productId}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                updateCartCount(data.cart_count);
+            }
+        });
+    }
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-from-cart-btn')) {
+        let itemId = e.target.dataset.itemId;
+        fetch('/ajax/remove-from-cart/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `item_id=${itemId}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                e.target.closest('.cart-item').remove();
+                updateCartCount(data.cart_count);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

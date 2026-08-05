@@ -1,0 +1,46 @@
+{% extends "emails/base_email.html" %}
+{% block title %}NEW DROP: {{ product.name }}{% endblock %}
+
+{% block content %}
+<h1>🚨 JUST DROPPED</h1>
+
+<p style="font-family: 'Inter', sans-serif; font-size: 18px; color: #ffffff; font-weight: 600; margin-bottom: 24px;">
+    {{ product.name }}
+</p>
+
+{% if product.image %}
+<div style="text-align: center; margin: 24px 0;">
+    <img src="{{ site_url }}{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #252525;">
+</div>
+{% endif %}
+
+<div style="background-color: #1a1a1a; border-radius: 8px; padding: 20px; margin: 24px 0; border: 1px solid #252525;">
+    <table role="presentation" width="100%">
+        <tr>
+            <td style="font-family: 'Inter', sans-serif; font-size: 14px; color: #b0b0b0; line-height: 1.6;">
+                {{ product.description|truncatewords:40 }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 16px;">
+                <span class="order-total">₦{{ product.price|floatformat:0 }}</span>
+            </td>
+        </tr>
+        {% if product.sizes %}
+        <tr>
+            <td style="padding-top: 8px; font-family: 'Inter', sans-serif; font-size: 12px; color: #888888;">
+                Available sizes: {% for size in product.sizes %}{{ size }}{% if not forloop.last %}, {% endif %}{% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+<p style="text-align: center;">
+    <a href="{{ product_url }}" class="cta-button">Cop It Now →</a>
+</p>
+
+<p style="text-align: center; font-size: 13px; color: #666666;">
+    Limited stock. First come, first served. You know the drill.
+</p>
+{% endblock %}

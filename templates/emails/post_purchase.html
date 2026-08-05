@@ -1,0 +1,56 @@
+{% extends "emails/base_email.html" %}
+{% block title %}How's your RIOT fit?{% endblock %}
+
+{% block content %}
+<h1>How's the fit, {{ username }}? 🤘</h1>
+
+<p>It's been a few days since your order landed. We hope you're already turning heads in your new RIOT gear.</p>
+
+<h2>Your recent pickup</h2>
+
+{% for item in order_items %}
+<div class="product-card" style="margin-bottom: 8px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            {% if item.product.image %}
+            <td style="width: 80px; vertical-align: top;">
+                <img src="{{ site_url }}{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+            </td>
+            {% endif %}
+            <td class="product-card-info" style="vertical-align: middle; padding-left: 16px;">
+                <div class="product-card-name">{{ item.product.name }}</div>
+                {% if item.size %}<div class="product-card-size">Size: {{ item.size }}</div>{% endif %}
+            </td>
+        </tr>
+    </table>
+</div>
+{% endfor %}
+
+<hr class="divider">
+
+<h2>We'd love to hear from you</h2>
+
+<p>Drop your thoughts — it helps us make better gear for the culture:</p>
+
+<table role="presentation" width="100%">
+    <tr>
+        <td style="text-align: center; padding: 8px;">
+            <a href="{{ site_url }}/contact/" class="cta-button">Share Your Feedback</a>
+        </td>
+    </tr>
+</table>
+
+<hr class="divider">
+
+<h2>Style it up 🔥</h2>
+
+<p>Here are some ways to flex your new pieces:</p>
+
+<p>👟 <strong>Layer it up</strong> — Pair with an oversized jacket for that effortless look<br>
+📸 <strong>Post your fit</strong> — Tag us on Instagram and get featured<br>
+🔄 <strong>Mix & match</strong> — Check out pieces that go hard with your order</p>
+
+<p style="text-align: center;">
+    <a href="{{ products_url }}" class="cta-secondary">Browse More Pieces</a>
+</p>
+{% endblock %}

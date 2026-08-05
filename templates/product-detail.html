@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} | RYOT{% endblock %}
+
+{% block content %}
+<section class="products section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-12 mb-4">
+                <img src="{{ product.image.url }}" class="img-fluid product-image" alt="{{ product.name }}">
+            </div>
+
+            <div class="col-lg-6 col-12">
+                <h2 class="product-title mb-2">{{ product.name }}</h2>
+                <p class="product-p mb-3">{{ product.description }}</p>
+                <small class="product-price text-muted d-block mb-4">₦{{ product.price }}</small>
+
+                <form id="add-to-cart-form" action="{% url 'buy_now' product.id %}" method="POST">
+                    {% csrf_token %}
+
+                    {% if product.sizes %}
+                    <div class="mb-4">
+                        <p class="product-p mb-2">Select Size</p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            {% for size in product.sizes %}
+                            <label class="btn btn-outline-dark">
+                                <input type="radio" name="size" value="{{ size }}" required hidden>
+                                {{ size }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <p class="product-p mb-2">Quantity</p>
+                        <input type="number" name="quantity" class="form-control w-25" value="1" min="1" required>
+                    </div>
+
+                    <div class="product-detail-actions d-flex gap-3 align-items-center">
+                        <button type="button" id="add-to-cart-btn" class="btn custom-btn">Add to Cart</button>
+                        <p id="cart-message" style="display:none; color:green; margin: 0;"></p>
+                        <button type="submit" id="buy-now-btn" class="btn custom-btn custom-border-btn"
+                                data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}"
+                                data-product-id="{{ product.id }}"
+                                data-sign-in-url="{% url 'sign-in' %}">
+                            Buy Now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('add-to-cart-btn').addEventListener('click', function () {
+    const productId = "{{ product.id }}";
+    const quantity = document.querySelector('input[name="quantity"]').value;
+    const sizeInput = document.querySelector('input[name="size"]:checked');
+    const size = sizeInput ? sizeInput.value : null;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch("{% url 'ajax-add-to-cart' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": csrfToken
+        },
+        body: `product_id=${productId}&quantity=${quantity}&size=${size || ''}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        const msg = document.getElementById('cart-message');
+        msg.style.display = "block";
+        msg.innerText = data.message || "Added";
+
+        const cartCount = document.getElementById('cart-count');
+        if (cartCount && data.cart_count !== undefined) {
+            cartCount.innerText = data.cart_count;
+            if (parseInt(data.cart_count) > 0) {
+                cartCount.style.display = 'inline-block';
+            } else {
+                cartCount.style.display = 'none';
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

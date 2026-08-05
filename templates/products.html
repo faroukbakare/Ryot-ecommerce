@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<section class="products section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-5">Products</h2>
+            </div>
+
+            {% for product in products %}
+            <div class="col-lg-4 col-md-6 col-12 mb-4">
+                <div class="product-thumb">
+                    <a href="{% url 'product-detail' product.id %}">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="img-fluid product-image" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="{% static 'images/default.jpg' %}" class="img-fluid product-image" alt="No image available">
+                        {% endif %}
+                    </a>
+
+                    <div class="product-info d-flex align-items-center">
+                        <div>
+                            <h5 class="product-title mb-0">
+                                <a href="{% url 'product-detail' product.id %}" class="product-title-link">{{ product.name }}</a>
+                            </h5>
+                        </div>
+                        <small class="product-price text-muted ms-auto me-3">₦{{ product.price }}</small>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p>No products available.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

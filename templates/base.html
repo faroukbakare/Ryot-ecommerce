@@ -1,0 +1,151 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>{% block title %}Ryot.ng{% endblock %}</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/slick.css' %}"/>
+        <link href="{% static 'css/tooplate-little-fashion.css' %}" rel="stylesheet">
+        {% block extra_head %}{% endblock %}
+    </head>
+    <body>
+        <form id="csrf-form" style="display:none;">
+            {% csrf_token %}
+        </form>
+
+        <section class="preloader">
+            <div class="spinner">
+                <span class="sk-inner-circle"></span>
+            </div>
+        </section>
+
+        <main>
+            <nav class="navbar navbar-expand-lg">
+                <div class="container">
+                    
+        <!-- Mobile Toggle -->
+         <button class="navbar-toggler" type="button"
+         data-bs-toggle="collapse"
+         data-bs-target="#navbarNav"
+         aria-controls="navbarNav"
+         aria-expanded="false"
+         aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Logo -->
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="{% static 'images/site.png' %}"
+                alt="RioT Logo"
+                style="width:120px;height:auto;">
+        </a>
+
+        <!-- Navigation -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <ul class="navbar-nav mx-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">Story</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'products' %}">Products</a>
+                </li>
+
+                {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                </li>
+
+            </ul>
+
+            <!-- Right Side Icons -->
+            <div class="navbar-actions">
+
+                <a href="{% url 'cart' %}" class="bi-bag custom-icon position-relative">
+
+                    {% if cart_count > 0 %}
+                    <span id="cart-count"
+                        style="position:absolute;top:-5px;right:-10px;background:red;color:#fff;font-size:12px;padding:2px 6px;border-radius:50%;">
+                        {{ cart_count }}
+                    </span>
+                    {% else %}
+                    <span id="cart-count"
+                        style="display:none;position:absolute;top:-5px;right:-10px;background:red;color:#fff;font-size:12px;padding:2px 6px;border-radius:50%;">
+                    </span>
+                    {% endif %}
+
+                </a>
+
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'sign-out' %}"
+                    class="bi-box-arrow-right custom-icon"
+                    title="Log Out"></a>
+                {% else %}
+                <a href="{% url 'sign-in' %}"
+                    class="bi-person custom-icon"
+                    title="Sign In"></a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+</nav>
+{% block content %}{% endblock %}
+</main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-10 me-auto mb-4">
+                        <a class="footer-menu-item" href="{% url 'index' %}"><img src="{% static 'images/site.png' %}" style="width: 140px; height: auto; margin-bottom: -50px; margin-left: 10px;" alt="RioT Logo"></a>
+                        <br><br><br>
+                        <p class="copyright-text text-muted mt-lg-5 mb-4 mb-lg-0">Copyright © 2025 <strong>Ry</strong>oT</p>
+                    </div>
+                    
+                    <div class="col-lg-5 col-8">
+                        <h5 class="text-white mb-3">Sitemap</h5>
+                        <ul class="footer-menu d-flex flex-wrap">
+                            <li class="footer-menu-item"><a href="{% url 'about' %}" class="footer-menu-link">Story</a></li>
+                            <li class="footer-menu-item"><a href="{% url 'products' %}" class="footer-menu-link">Products</a></li>
+                            <li class="footer-menu-item"><a href="{% url 'contact' %}" class="footer-menu-link">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-4">
+                        <h5 class="text-white mb-3">Social</h5>
+                        <ul class="social-icon">
+                            <li><a href="#" class="social-icon-link bi-whatsapp"></a></li>
+                            <li><a href="https://instagram.com/riotinc7" class="social-icon-link bi-instagram" target="_blank"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/Headroom.js' %}"></script>
+        <script src="{% static 'js/jQuery.headroom.js' %}"></script>
+        <script src="{% static 'js/slick.min.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+        {% block extra_scripts %}{% endblock %}
+    </body>
+</html>

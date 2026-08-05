@@ -1,0 +1,32 @@
+{% extends "emails/base_email.html" %}
+{% block title %}We miss you at RIOT{% endblock %}
+
+{% block content %}
+<h1>It's been a minute, {{ username }} 💀</h1>
+
+<p>We noticed you haven't been around lately. The streets haven't been the same without you — and neither has our shop.</p>
+
+<p>We've dropped some new pieces since you last visited, and we want to make sure you don't miss out. So here's something special just for you:</p>
+
+<div class="discount-box">
+    <div class="discount-label">Your exclusive comeback code</div>
+    <div class="discount-code">{{ discount_code }}</div>
+    <p style="font-size: 13px; color: #d4a843; margin: 8px 0 0 0; font-weight: 600;">{{ discount_percent }}% OFF your next order</p>
+</div>
+
+<p style="text-align: center;">
+    <a href="{{ products_url }}" class="cta-button">See What You've Missed →</a>
+</p>
+
+<hr class="divider">
+
+<h2>What's been happening at RIOT</h2>
+
+<p>🚨 <strong>New drops landed</strong> — Fresh pieces you haven't seen yet<br>
+🔥 <strong>Limited stock</strong> — Some items are almost gone<br>
+🏷️ <strong>This code is just for you</strong> — And it expires in 7 days</p>
+
+<p style="text-align: center; font-size: 13px; color: #666666; margin-top: 24px;">
+    This offer was made exclusively for <strong style="color: #ffffff;">{{ user.email }}</strong>. Don't let it go to waste.
+</p>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+<section class="container mt-5 mb-5">
+    <h3 class="mb-4">
+        Cart (
+        <span id="cart-count-header">{{ cart_count }}</span>
+        )
+    </h3>
+
+    <div id="cart-container">
+        {% for item in cart_items %}
+        <div class="row align-items-center border-bottom py-4 cart-item" data-item-id="{{ item.id }}">
+            <div class="col-md-2">
+                <img src="{{ item.product.image.url }}" class="img-fluid rounded" alt="{{ item.product.name }}">
+            </div>
+
+            <div class="col-md-4">
+                <h4 class="fw-bold mb-2">{{ item.product.name }}</h4>
+                {% if item.size %}
+                <p class="text-muted mb-1" style="font-size: 0.9rem;">Size: <strong>{{ item.size }}</strong></p>
+                {% endif %}
+                <p class="text-muted mb-3">₦{{ item.product.price }}</p>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-outline-dark decrease" data-item-id="{{ item.id }}">-</button>
+                    <span class="quantity fw-bold">{{ item.quantity }}</span>
+                    <button type="button" class="btn btn-outline-dark increase" data-item-id="{{ item.id }}">+</button>
+                </div>
+            </div>
+
+            <div class="col-md-4 text-end">
+                <h3 class="fw-bold item-total">₦{{ item.total_price }}</h3>
+            </div>
+
+            <div class="col-md-2 text-end">
+                <button type="button" class="btn btn-link text-danger remove-btn" data-item-id="{{ item.id }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <h4>Your cart is empty.</h4>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="checkout-section" class="mt-5 border-top pt-4" {% if not cart_items %}style="display:none;"{% endif %}>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fw-bold text-danger">Estimated total</h1>
+                <p class="text-muted">Taxes and shipping calculated at checkout.</p>
+            </div>
+            <h1 class="fw-bold text-danger">₦<span id="cart-total">{{ cart_total }}</span></h1>
+        </div>
+
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'checkout' %}" class="btn btn-dark w-100 mt-4 py-3">Checkout</a>
+        {% else %}
+        <a href="{% url 'sign-in' %}?next={% url 'checkout' %}" class="btn btn-dark w-100 mt-4 py-3">Checkout</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function getCSRFToken() {
+    const tokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (tokenInput && tokenInput.value) {
+        return tokenInput.value;
+    }
+    return getCookie('csrftoken') || '';
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+async function postData(url, bodyParams) {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCSRFToken(),
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams(bodyParams).toString()
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status} (${response.statusText})`);
+    }
+
+    return await response.json();
+}
+
+function updateCartTotals(data) {
+    const totalEl = document.getElementById('cart-total');
+    const countHeaderEl = document.getElementById('cart-count-header');
+    const countBadgeEl = document.getElementById('cart-count');
+
+    if (totalEl && data.cart_total !== undefined) {
+        totalEl.innerText = data.cart_total;
+    }
+
+    if (countHeaderEl && data.cart_count !== undefined) {
+        countHeaderEl.innerText = data.cart_count;
+    }
+
+    if (countBadgeEl && data.cart_count !== undefined) {
+        const count = parseInt(data.cart_count);
+        if (count > 0) {
+            countBadgeEl.innerText = count;
+            countBadgeEl.style.display = 'block';
+        } else {
+            countBadgeEl.style.display = 'none';
+        }
+    }
+
+    const cartItems = document.querySelectorAll('.cart-item');
+    if (cartItems.length === 0) {
+        document.getElementById('cart-container').innerHTML = `
+            <div class="text-center py-5">
+                <h4>Your cart is empty.</h4>
+            </div>
+        `;
+        const checkoutSection = document.getElementById('checkout-section');
+        if (checkoutSection) {
+            checkoutSection.style.display = 'none';
+        }
+    }
+}
+
+document.addEventListener('click', async function(e) {
+    const removeBtn = e.target.closest('.remove-btn');
+    if (removeBtn) {
+        e.preventDefault();
+        const row = e.target.closest('.cart-item');
+        if (!row) return;
+        const itemId = row.dataset.itemId;
+
+        row.style.transition = 'opacity 0.3s ease, height 0.3s ease';
+        row.style.opacity = '0';
+        setTimeout(() => {
+            row.remove();
+            if (document.querySelectorAll('.cart-item').length === 0) {
+                updateCartTotals({ cart_count: 0, cart_total: '0' });
+            }
+        }, 300);
+
+        try {
+            const data = await postData("{% url 'ajax-remove-from-cart' %}", { item_id: itemId });
+            if (data.success || data.status === 'success') {
+                updateCartTotals(data);
+            } else {
+                window.location.reload();
+            }
+        } catch (err) {
+            alert("Request Failed!\nError: " + err.message + "\nURL tried: {% url 'ajax-remove-from-cart' %}");
+            window.location.reload();
+        }
+        return;
+    }
+
+    const qtyBtn = e.target.closest('.increase') || e.target.closest('.decrease');
+    if (qtyBtn) {
+        e.preventDefault();
+        const row = e.target.closest('.cart-item');
+        if (!row) return;
+
+        const itemId = row.dataset.itemId;
+        const action = qtyBtn.classList.contains('increase') ? 'increase' : 'decrease';
+
+        try {
+            const data = await postData("{% url 'update-quantity' %}", { item_id: itemId, action: action });
+            if (data.success || data.status === 'success') {
+                if (data.quantity <= 0) {
+                    row.style.transition = 'opacity 0.3s ease';
+                    row.style.opacity = '0';
+                    setTimeout(() => {
+                        row.remove();
+                        updateCartTotals(data);
+                    }, 300);
+                } else {
+                    const quantityEl = row.querySelector('.quantity');
+                    const itemTotalEl = row.querySelector('.item-total');
+                    if (quantityEl) quantityEl.innerText = data.quantity;
+                    if (itemTotalEl) itemTotalEl.innerText = '₦' + data.item_total;
+                    updateCartTotals(data);
+                }
+            }
+        } catch (err) {
+            alert("Request Failed!\nError: " + err.message + "\nURL tried: {% url 'update-quantity' %}");
+        }
+    }
+});
+</script>
+{% endblock %}
